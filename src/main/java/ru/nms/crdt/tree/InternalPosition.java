@@ -3,14 +3,24 @@ package ru.nms.crdt.tree;
 import lombok.*;
 import ru.nms.crdt.util.Pair;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@EqualsAndHashCode
+@ToString
 public class InternalPosition implements Comparable<InternalPosition> {
+
     private String sender;
+    @Setter
     private int counter;
+
+    @Setter
     private InternalPosition parent;
+
     private boolean leftChild;
+
     private int depth;
 
     private char symbol;
@@ -21,7 +31,7 @@ public class InternalPosition implements Comparable<InternalPosition> {
         InternalPosition a = this;
         InternalPosition b = o;
 
-        if (this.equals(o)) return 0;
+        if (a.equals(b)) return 0;
 
         Pair<String, Boolean> lastMove = null;
         while (a.depth > b.depth) {
@@ -33,11 +43,11 @@ public class InternalPosition implements Comparable<InternalPosition> {
             b = b.parent;
         }
 
-        if (a == b) {
+        if (Objects.equals(a, b)) {
             return (lastMove.getFirst().equals("a") ? 1 : -1) * (lastMove.getSecond() ? -1 : 1);
         }
 
-        while (a.parent != b.parent) {
+        while (!Objects.equals(a.parent, b.parent)) {
             a = a.parent;
             b = b.parent;
         }

@@ -1,8 +1,42 @@
 spring:
   application:
     name: crdt
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  cloud:
+    discovery:
+      blocking.enabled: true
+      reactive.enabled: false
+
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+
+---
+spring.config.activate.on-profile: profile-1
+
+server:
+  port: 8081
+
+---
+spring.config.activate.on-profile: profile-2
+
+server:
+  port: 8082
+
+---
+spring.config.activate.on-profile: profile-3
+
+server:
+  port: 8083
+
+---
+spring.config.activate.on-profile: profile-4
+
+server:
+  port: 8084

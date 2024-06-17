@@ -14,6 +14,7 @@ public class FugueTree {
     @Getter
     private final TreeSet<InternalPosition> localState = new TreeSet<>();
 
+
     public InternalPosition createBetween(InternalPosition a, InternalPosition b, char symbol) {
         boolean isAnc = false;
         if (b != null) {
@@ -32,22 +33,28 @@ public class FugueTree {
         InternalPosition newIntPos;
         if (isAnc) {
             if (a == null) {
-                newIntPos = new InternalPosition(replicaID, localState.size(), null, true, 1, symbol);
+                newIntPos = new InternalPosition(replicaID, 0, null, true, 1, symbol);
             } else {
-                newIntPos = new InternalPosition(replicaID, localState.size(), b, true, b.getDepth() + 1, symbol);
+                newIntPos = new InternalPosition(replicaID, 0, b, true, b.getDepth() + 1, symbol);
             }
         } else {
             if (a == null) {
-                newIntPos = new InternalPosition(replicaID, localState.size(), null, false, 1, symbol);
+                newIntPos = new InternalPosition(replicaID, 0, null, false, 1, symbol);
             } else {
-                newIntPos = new InternalPosition(replicaID, localState.size(), a, false, a.getDepth() + 1, symbol);
+                newIntPos = new InternalPosition(replicaID, 0, a, false, a.getDepth() + 1, symbol);
             }
         }
         localState.add(newIntPos);
+        newIntPos.setCounter(localState.size());
         return newIntPos;
     }
 
     public void receive(InternalPosition receivedIntPos) {
+        if (receivedIntPos.getParent() != null && !localState.contains(receivedIntPos.getParent()))
+            throw new RuntimeException("Unknown parent!!");
+        for (InternalPosition position: localState) {
+            System.out.println(receivedIntPos.compareTo(position));
+        }
         localState.add(receivedIntPos);
     }
 }
