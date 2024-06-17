@@ -1,15 +1,16 @@
 package ru.nms.crdt.tree;
 
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.TreeSet;
-import java.util.UUID;
 
 @Component
 public class FugueTree {
 
-    private final String replicaID = UUID.randomUUID().toString();
+    @Value("${server.port}")
+    private String replicaID;
 
     @Getter
     private final TreeSet<InternalPosition> localState = new TreeSet<>();
@@ -52,9 +53,7 @@ public class FugueTree {
     public void receive(InternalPosition receivedIntPos) {
         if (receivedIntPos.getParent() != null && !localState.contains(receivedIntPos.getParent()))
             throw new RuntimeException("Unknown parent!!");
-        for (InternalPosition position: localState) {
-            System.out.println(receivedIntPos.compareTo(position));
-        }
+
         localState.add(receivedIntPos);
     }
 }

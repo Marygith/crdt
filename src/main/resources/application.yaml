@@ -8,7 +8,10 @@ spring:
     discovery:
       blocking.enabled: true
       reactive.enabled: false
-
+#  task:
+#    scheduling:
+#      pool:
+#        size: 5
 
 eureka:
   client:
