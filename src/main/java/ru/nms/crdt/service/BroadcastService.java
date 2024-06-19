@@ -21,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BroadcastService {
 
-    private final EurekaClient eurekaClient;
     private final DiscoveryClient discoveryClient;
     private final RestTemplate restTemplate = new RestTemplate();
 

@@ -60,4 +60,5 @@ public class InternalPosition implements Comparable<InternalPosition> {
             else return Integer.compare(a.counter, b.counter);
         }
     }
+
 }
