@@ -18,7 +18,12 @@ public class FugueTree {
     private final SortedSet<InternalPosition> localState = Collections.synchronizedSortedSet(new TreeSet<>());
 
 
-    public synchronized InternalPosition createBetween(InternalPosition a, InternalPosition b, char symbol) {
+    public InternalPosition createBetween(InternalPosition a, InternalPosition b, char symbol) {
+        if (localState.isEmpty()) {
+            var newIntPos = new InternalPosition(replicaID, 0, null, true, 1, symbol);
+            localState.add(newIntPos);
+            return newIntPos;
+        }
         boolean isAnc = false;
         if (b != null) {
             if (a == null) isAnc = true;
@@ -54,20 +59,6 @@ public class FugueTree {
 
     public void receive(InternalPosition receivedIntPos) {
         if (receivedIntPos.getParent() != null && !localState.contains(receivedIntPos.getParent())) {
-            var pos = receivedIntPos.getParent();
-
-            log.info("Starting comparing!!!\n");
-            List<InternalPosition> posList = localState.stream().toList();
-            for (int i = 0; i < posList.size() - 1; i++) {
-                log.info("elem {} compareTo elem {} is {}", i, i+1, posList.get(i).compareTo(posList.get(i + 1)));
-                log.info("elem {} compareTo elem {} is {}", i+1, i, posList.get(i+1).compareTo(posList.get(i)));
-            }
-            log.info("Checking equals!!!\n");
-            for (int i = 0; i < posList.size(); i++) {
-                for (int j = 0; j < posList.size(); j++) {
-                    log.info("elem {} compareTo elem {} is {}, equals is {}", i, j, posList.get(i).compareTo(posList.get(j)), posList.get(i).equals(posList.get(j)));
-                }
-            }
             throw new RuntimeException("Unknown parent!!");
         }
         localState.add(receivedIntPos);
