@@ -32,8 +32,6 @@ public class BroadcastService {
 
     public void send(InternalPosition position) {
         List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
-
-        log.info("Sending new position {} to other instances: {}, serviceId: {}", position, instances, serviceId);
         instances.forEach(instance -> {
             if (instance.getPort() != port) {
                 HttpHeaders headers = new HttpHeaders();

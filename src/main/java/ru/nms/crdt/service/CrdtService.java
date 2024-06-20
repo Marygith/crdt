@@ -23,26 +23,20 @@ public class CrdtService {
     @Value("${server.port}")
     private String port;
     public void receive(InternalPosition internalPosition) {
-        log.info("Received new position: {}", internalPosition);
         fugueTree.receive(internalPosition);
         logCurrentState();
     }
 
     public void insert(int pos, char symb) {
-        if (pos < 0) throw new RuntimeException("Position must not be negative!");
+        if (pos < 0) throw new RuntimeException("Position is negative");
         InternalPosition inserted;
         if (pos >= fugueTree.getLocalState().size()) {
-            log.info("Inserting {} as last symbol", symb);
             if (fugueTree.getLocalState().isEmpty()) inserted = insert(null, null, symb);
             else inserted = addLast(symb);
         } else if (pos == 0) {
-            log.info("Inserting {} as first symbol", symb);
-
             inserted = addFirst(symb);
         } else {
             InternalPosition[] arrayView = fugueTree.getLocalState().toArray(InternalPosition[]::new);
-            log.info("Inserting {} at position: {}, between {} and {}", symb, pos, arrayView[pos - 1].getSymbol(), arrayView[pos].getSymbol());
-
             inserted = insert(arrayView[pos - 1], arrayView[pos], symb);
         }
 
@@ -62,16 +56,13 @@ public class CrdtService {
 
     public void clear() {
         fugueTree.getLocalState().clear();
-        log.info("cleared local state");
     }
 
 
     @Scheduled(fixedDelay = 1000)
     public void sendChangesToOtherInstances() throws InterruptedException {
         int secondsToWait = random.nextInt(0, 10);
-//        log.info("Going offline for {} seconds", secondsToWait);
         Thread.sleep((long) secondsToWait * 1000 );
-        if (!positionsToSend.isEmpty()) log.info("Found {} not sent positions, sending...", positionsToSend.size());
         while (!positionsToSend.isEmpty()) {
             broadcastService.send(positionsToSend.pollLast());
         }
@@ -92,6 +83,6 @@ public class CrdtService {
     }
 
     private void logCurrentState() {
-        log.info("Updated text: {}", getLocalText());
+        log.info("current text: {}", getLocalText());
     }
 }

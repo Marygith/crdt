@@ -24,22 +24,22 @@ public class FugueTree {
             localState.add(newIntPos);
             return newIntPos;
         }
-        boolean isAnc = false;
+        boolean isAncestor = false;
         if (b != null) {
-            if (a == null) isAnc = true;
+            if (a == null) isAncestor = true;
             else {
                 if (b.getDepth() > a.getDepth()) {
-                    InternalPosition bAnc = b;
-                    while (bAnc.getDepth() > a.getDepth()) {
-                        bAnc = bAnc.getParent();
+                    InternalPosition ancestorOfB = b;
+                    while (ancestorOfB.getDepth() > a.getDepth()) {
+                        ancestorOfB = ancestorOfB.getParent();
                     }
-                    if (Objects.equals(bAnc, a)) isAnc = true;
+                    if (Objects.equals(ancestorOfB, a)) isAncestor = true;
                 }
             }
         }
 
         InternalPosition newIntPos;
-        if (isAnc) {
+        if (isAncestor) {
             if (a == null) {
                 newIntPos = new InternalPosition(replicaID, 0, null, true, 1, symbol);
             } else {
@@ -59,7 +59,7 @@ public class FugueTree {
 
     public void receive(InternalPosition receivedIntPos) {
         if (receivedIntPos.getParent() != null && !localState.contains(receivedIntPos.getParent())) {
-            throw new RuntimeException("Unknown parent!!");
+            throw new RuntimeException("There is no such parent in local fugue tree");
         }
         localState.add(receivedIntPos);
     }
